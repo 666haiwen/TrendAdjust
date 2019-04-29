@@ -45,7 +45,7 @@ class TrendData(object):
                 if (int(data[2]) not in [0, 1, -1, -2, -3]):
                     print('The type value in line({}) of generators is not belong to [0, 1, -1, -2, -3]'.format(i + 1))
                     self.flag = False
-                if int(data[2] == 0):
+                if int(data[2]) == 0:
                     flag = True
                 P = float(data[3])
                 Q = float(data[4])

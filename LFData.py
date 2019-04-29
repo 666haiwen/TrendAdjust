@@ -28,6 +28,6 @@ class LFData(object):
     def __call__(self):
         for file_name in self.files:
             self.read_lf_2_csv(file_name)
-files = ['LF.L2', 'LF.L5', 'LF.L6']
+files = ['LF.L2', 'LF.L3', 'LF.L5', 'LF.L6']
 lfData = LFData(files)
 lfData()

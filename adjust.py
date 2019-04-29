@@ -2,6 +2,7 @@ from TrendData import TrendData
 from vertify import Vertify
 from utils import Tk_range
 from const import INTERVAL
+import numpy as np
 import os
 
 
@@ -80,6 +81,21 @@ class AdjustTrend(object):
         self.vertify(TrendData(buses=self.buses, generators=self.generators,\
              loads=self.loads, transformers=self.transformers, acLinesData=self.acLinesData))
 
+    def __get_pq(self, data):
+        pmax, pmin = data['PMax'], data['PMin']
+        if pmax == 0:
+            pmax = data['Pg'] * 1.5
+        if pmin == 0:
+            pmin = data['Pg'] * 0.5
+        qmax, qmin = data['QMax'], data['QMin']
+        if qmax == 0:
+            qmax = data['Qg'] * 1.5
+        if qmin == 0:
+            qmin = data['Qg'] * 0.5
+        pInterval = (pmax - pmin) / INTERVAL
+        qInterval = (qmax - qmin) / INTERVAL
+        return pmax, pmin, pInterval, qmax, qmin, qInterval
+
     def __adjust_generators(self, adjustList, i, value, auto):
         if auto == False:
             self.generators[i]['mark'] = value['mark']
@@ -88,8 +104,7 @@ class AdjustTrend(object):
             self.generators[i]['Qg'] = value['Qg']
             self.generators[i]['V0'] = value['V0']
         else:
-            pInterval = (self.loads[i]['PMax'] - self.loads[i]['PMin']) / INTERVAL
-            qInterval = (self.loads[i]['QMax'] - self.loads[i]['QMin']) / INTERVAL
+            pmax, pmin, pInterval, qmax, qmin, qInterval = self.__get_pq(self.generators[i])
             vInterval = 10 / INTERVAL
             for mark in range(2):
                 self.generators[i]['mark'] = mark
@@ -97,11 +112,11 @@ class AdjustTrend(object):
                     self.generators[i]['type'] = t
                     if t == 0:
                         continue
-                    for p in range(INTERVAL + 1):
-                        self.generators[i]['Pg'] = self.generators[i]['PMin'] + p * pInterval
+                    for p in np.range(pmin, pmax, pInterval):
+                        self.generators[i]['Pg'] = p
                         if t == 1 or t == -3:
-                            for q in range(INTERVAL + 1):
-                                self.generators[i]['Qg'] = self.generators[i]['QMin'] + q * qInterval
+                            for q in np.range(qmin, qmax, qInterval):
+                                self.generators[i]['Qg'] = q
                                 self.__adjust_hidden(adjustList)
                         else:
                             for v in range(INTERVAL + 1):
@@ -110,18 +125,17 @@ class AdjustTrend(object):
 
     def __adjust_loads(self, adjustList, i, value, auto):
         if auto == False:
-            self.transformers[i]['mark'] = value['mark']
-            self.transformers[i]['Pg'] = value['Pg']
-            self.transformers[i]['Qg'] = value['Qg']
+            self.loads[i]['mark'] = value['mark']
+            self.loads[i]['Pg'] = value['Pg']
+            self.loads[i]['Qg'] = value['Qg']
         else:
-            pInterval = (self.loads[i]['PMax'] - self.loads[i]['PMin']) / INTERVAL
-            qInterval = (self.loads[i]['QMax'] - self.loads[i]['QMin']) / INTERVAL
+            pmax, pmin, pInterval, qmax, qmin, qInterval = self.__get_pq(self.loads[i])
             for mark in range(2):
                 self.loads[i]['mark'] = mark
-                for p in range(INTERVAL + 1):
-                    self.loads[i]['Pg'] = pInterval * p + self.loads[i]['PMin']
-                    for q in range(INTERVAL + 1):
-                        self.loads[i]['Qg'] = qInterval * q + self.loads[i]['QMin']
+                for p in np.range(pmin, pmax, pInterval):
+                    self.loads[i]['Pg'] = p
+                    for q in np.range(qmin, qmax, qInterval):
+                        self.loads[i]['Qg'] = q
                         self.__adjust_hidden(adjustList)
 
     def __adjust_transformers(self, adjustList, i, value, auto):

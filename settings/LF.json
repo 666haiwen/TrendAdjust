@@ -14,7 +14,7 @@
     },
     "LF.L3": {
         "names": ["Mark", "I_Name", "J_name", "No.", "R", "X", "Tk", "Rm", "Xm", "F/T", "Type", "PL", "TP", "CB",
-             "CL", "VQP", "theta", "TC", "LIM","ID", "J", "TrsType","name_ctrl","type_ctrl,IDName"],
+             "CL", "VQP", "theta", "TC", "LIM","ID", "J", "TrsType","name_ctrl","type_ctrl","IDName"],
         "labels": []
     },
     "LF.NL4": {

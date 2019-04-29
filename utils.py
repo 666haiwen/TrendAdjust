@@ -22,7 +22,7 @@ def Tk_range(data, buses, line):
     Vjb = buses[j]['vBase']
     if Vi == 0:
         print('Transformers({}) :\t Viact is zero!'.format(line))
-        return 0, 0
+        return 1, 1
     Tk1 = Vj1 / Vjb / Vi * Vib
     Tk2 = Vj2 / Vjb / Vi * Vib
     return min(Tk1, Tk2), max(Tk1, Tk2)
