@@ -75,7 +75,7 @@ class Vertify(object):
             for i, line in enumerate(fp):
                 data = line.split(',')
                 Lf2 = inputData.acLinesData[i]
-                if int(Lf2.data[14]) == 0:
+                if float(Lf2['data'][14]) == 0:
                     continue
                 Pi = float(data[3])
                 Qi = float(data[4])
@@ -96,7 +96,7 @@ class Vertify(object):
             for i, line in enumerate(fp):
                 data = line.split(',')
                 Lf3 = inputData.transformers[i]
-                if int(Lf3.data[18]) == 0:
+                if float(Lf3['data'][18]) == 0:
                     continue
                 Pi = float(data[3])
                 Qi = float(data[4])

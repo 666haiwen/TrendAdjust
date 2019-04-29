@@ -84,14 +84,14 @@ class AdjustTrend(object):
     def __get_pq(self, data):
         pmax, pmin = data['PMax'], data['PMin']
         if pmax == 0:
-            pmax = data['Pg'] * 1.5
+            pmax = data['Pg'] + 5
         if pmin == 0:
-            pmin = data['Pg'] * 0.5
+            pmin = data['Pg'] - 5
         qmax, qmin = data['QMax'], data['QMin']
         if qmax == 0:
-            qmax = data['Qg'] * 1.5
+            qmax = data['Qg'] + 5
         if qmin == 0:
-            qmin = data['Qg'] * 0.5
+            qmin = data['Qg'] - 5
         pInterval = (pmax - pmin) / INTERVAL
         qInterval = (qmax - qmin) / INTERVAL
         return pmax, pmin, pInterval, qmax, qmin, qInterval
@@ -112,10 +112,10 @@ class AdjustTrend(object):
                     self.generators[i]['type'] = t
                     if t == 0:
                         continue
-                    for p in np.range(pmin, pmax, pInterval):
+                    for p in np.arange(pmin, pmax, pInterval):
                         self.generators[i]['Pg'] = p
                         if t == 1 or t == -3:
-                            for q in np.range(qmin, qmax, qInterval):
+                            for q in np.arange(qmin, qmax, qInterval):
                                 self.generators[i]['Qg'] = q
                                 self.__adjust_hidden(adjustList)
                         else:
@@ -132,9 +132,9 @@ class AdjustTrend(object):
             pmax, pmin, pInterval, qmax, qmin, qInterval = self.__get_pq(self.loads[i])
             for mark in range(2):
                 self.loads[i]['mark'] = mark
-                for p in np.range(pmin, pmax, pInterval):
+                for p in np.arange(pmin, pmax, pInterval):
                     self.loads[i]['Pg'] = p
-                    for q in np.range(qmin, qmax, qInterval):
+                    for q in np.arange(qmin, qmax, qInterval):
                         self.loads[i]['Qg'] = q
                         self.__adjust_hidden(adjustList)
 
