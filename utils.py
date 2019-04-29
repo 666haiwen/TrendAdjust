@@ -41,6 +41,8 @@ def params_range(x, vMin, vMax, content, typeName, line):
         return:
             res: True or False.
     """
+    if vMax == vMin == 0:
+        return True
     if x < vMin or x > vMax:
         print('{}({}): \t The {} = {} is out of range[{}, {}]'\
             .format(typeName, line, content, x, vMin, vMax))

@@ -118,14 +118,16 @@ class Vertify(object):
                 Lf5 = inputData.generators[i]
                 Pg = float(data[1])
                 Qg = float(data[2])
-                if Pg < Lf5['PMin'] or Pg > Lf5['PMax']:
-                    print('The Pg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
-                        .format(Pg, i + 1, Lf5['PMin'], Lf5['PMax']))
-                    return False
-                if Qg < Lf5['QMin'] or Pg > Lf5['QMax']:
-                    print('The Qg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
-                        .format(Qg, i + 1, Lf5['QMin'], Lf5['QMax']))
-                    return False
+                if Lf5['PMin'] != Lf5['PMax'] != 0:
+                    if Pg < Lf5['PMin'] or Pg > Lf5['PMax']:
+                        print('The Pg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
+                            .format(Pg, i + 1, Lf5['PMin'], Lf5['PMax']))
+                        return False
+                if Lf5['QMin'] != Lf5['QMax'] != 0:
+                    if Qg < Lf5['QMin'] or Pg > Lf5['QMax']:
+                        print('The Qg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
+                            .format(Qg, i + 1, Lf5['QMin'], Lf5['QMax']))
+                        return False
         # Load
         with open(os.path.join(self.runPath,  'LF.LP6'), 'r', encoding='gbk') as fp:
             for i, line in enumerate(fp):
@@ -133,14 +135,16 @@ class Vertify(object):
                 Lf6 = inputData.loads[i]
                 Pg = float(data[2])
                 Qg = float(data[3])
-                if Pg < Lf6['PMin'] or Pg > Lf6['PMax']:
-                    print('The Pg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
-                        .format(Pg, i + 1, Lf6['PMin'], Lf6['PMax']))
-                    return False
-                if Qg < Lf6['QMin'] or Pg > Lf6['QMax']:
-                    print('The Qg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
-                        .format(Qg, i + 1, Lf6['QMin'], Lf6['QMax']))
-                    return False
+                if Lf6['PMin'] != Lf6['PMax'] != 0:
+                    if Pg < Lf6['PMin'] or Pg > Lf6['PMax']:
+                        print('The Pg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
+                            .format(Pg, i + 1, Lf6['PMin'], Lf6['PMax']))
+                        return False
+                if Lf6['QMin'] != Lf6['QMax'] != 0:
+                    if Qg < Lf6['QMin'] or Pg > Lf6['QMax']:
+                        print('The Qg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
+                            .format(Qg, i + 1, Lf6['QMin'], Lf6['QMax']))
+                        return False
                 
         self.copy_res()
         return  True
