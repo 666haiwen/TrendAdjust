@@ -31,14 +31,21 @@ class AdjustTrend(object):
         
 
     def __output(self):
+        """
+            1.vertify the reasonable of input data.
+            2.write the adjust input data to the dst dirs
+            3.vertify the reasonable of output
+        """
         def fpWrite(fp, data):
             for s in data:
                 fp.write(s + ',')
             fp.write('\n')
 
+        # 1.step
         if self.trendData.getReasonable() == False:
             print('There are some error in the input data!')
             return
+        # 2.step
         with open(os.path.join(self.runPath, 'LF.L5'), 'w+', encoding='utf-8') as fp:
             for v in self.generators:
                 data = v['data']
@@ -69,6 +76,7 @@ class AdjustTrend(object):
                 data = v['data']
                 data[0] = str(v['mark'])
                 fpWrite(fp, data)
+        # 3.step
         self.vertify(TrendData(buses=self.buses, generators=self.generators,\
              loads=self.loads, transformers=self.transformers, acLinesData=self.acLinesData))
 
@@ -144,6 +152,9 @@ class AdjustTrend(object):
                     self.__adjust_hidden(adjustList)
 
     def __adjust_hidden(self, adjustList):
+        """
+            Set every adjust step to a hidden func ==> Nesting loop
+        """
         if len(adjustList) == 0:
             self.__output()
             return

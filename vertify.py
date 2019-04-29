@@ -147,5 +147,4 @@ class Vertify(object):
                         return False
                 
         self.copy_res()
-        return  True
-
+        return True
