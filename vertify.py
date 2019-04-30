@@ -26,6 +26,13 @@ class Vertify(object):
     def copy_res(self, result=False, reason=None):
         """
             copy the input and output of reasonible case to the results file
+            @params:
+                result: True or False;
+                    True : Convergence and reasonable
+                    False: Divergence or Convergence but unreasonable
+                reason:
+                    The reason of result == False
+
         """
         if result == True:
             resPath = os.path.join(self.resPath, 'Convergence')
@@ -67,8 +74,9 @@ class Vertify(object):
             firstLine = fp.readline()
             data = firstLine.split(',')
             if int(data[0]) == 0:
-                print('The result doesn\'t converge!')
-                self.copy_res()
+                reason = 'The result doesn\'t converge!'
+                print(reason)
+                self.copy_res(reason=reason)
                 return False
         # bus
         with open(os.path.join(self.runPath,  'LF.LP1'), 'r', encoding='gbk') as fp:
@@ -78,9 +86,10 @@ class Vertify(object):
                 data = line.split(',')
                 v = float(data[1])
                 if v > 1.05 or v < 0.95:
-                    print('The voltage({}) of the busId({}) is out of range.'\
-                        .format(v, i + 1))
-                    self.copy_res()
+                    reason = 'The voltage({}) of the busId({}) is out of range.'\
+                        .format(v, i + 1)
+                    print(reason)
+                    self.copy_res(reason=reason)
                     return False
         # AC lines
         with open(os.path.join(self.runPath,  'LF.LP2'), 'r', encoding='gbk') as fp:
@@ -96,14 +105,16 @@ class Vertify(object):
                 Ui = inputData.buses[Lf2['i']]['vBase']
                 Uj = inputData.buses[Lf2['j']]['vBase']
                 if Pi ** 2 + Qi ** 2 > (Ui * Lf2['I']) ** 2:
-                    print('The Pi ** 2 +Qi ** 2 out of Range in line({}) of LF.LP2'\
-                        .format(i + 1))
-                    self.copy_res()
+                    reason = 'The Pi ** 2 +Qi ** 2 out of Range in line({}) of LF.LP2'\
+                        .format(i + 1)
+                    print(reason)
+                    self.copy_res(reason=reason)
                     return False
                 if Pj ** 2 + Qj ** 2 > (Uj * Lf2['I']) ** 2:
-                    print('The Pj ** 2 +Qj ** 2 out of Range in line({}) of LF.LP2'\
-                        .format(i + 1))
-                    self.copy_res()
+                    reason = 'The Pj ** 2 +Qj ** 2 out of Range in line({}) of LF.LP2'\
+                        .format(i + 1)
+                    print(reason)
+                    self.copy_res(reason=reason)
                     return False
         # Transformer
         with open(os.path.join(self.runPath,  'LF.LP3'), 'r', encoding='gbk') as fp:
@@ -118,12 +129,16 @@ class Vertify(object):
                 Qj = float(data[6])
                 S = float(Lf3.data[18])
                 if Pi ** 2 + Qi ** 2 > S ** 2:
-                    print('The Pi ** 2 +Qi ** 2 out of Range in line({}) of LF.LP3'\
-                        .format(i + 1))
+                    reason = 'The Pi ** 2 +Qi ** 2 out of Range in line({}) of LF.LP3'\
+                        .format(i + 1)
+                    print(reason)
+                    self.copy_res(reason=reason)
                     return False
                 if Pj ** 2 + Qj ** 2 > S ** 2:
-                    print('The Pj ** 2 +Qj ** 2 out of Range in line({}) of LF.LP3'\
-                        .format(i + 1))
+                    reason = 'The Pj ** 2 +Qj ** 2 out of Range in line({}) of LF.LP3'\
+                        .format(i + 1)
+                    print(reason)
+                    self.copy_res(reason=reason)
                     return False
         # Generator
         with open(os.path.join(self.runPath,  'LF.LP5'), 'r', encoding='gbk') as fp:
@@ -134,13 +149,17 @@ class Vertify(object):
                 Qg = float(data[2])
                 if Lf5['PMin'] != Lf5['PMax'] != 0:
                     if Pg < Lf5['PMin'] or Pg > Lf5['PMax']:
-                        print('The Pg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
-                            .format(Pg, i + 1, Lf5['PMin'], Lf5['PMax']))
+                        reason = 'The Pg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
+                            .format(Pg, i + 1, Lf5['PMin'], Lf5['PMax'])
+                        print(reason)
+                        self.copy_res(reason=reason)
                         return False
                 if Lf5['QMin'] != Lf5['QMax'] != 0:
                     if Qg < Lf5['QMin'] or Pg > Lf5['QMax']:
-                        print('The Qg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
-                            .format(Qg, i + 1, Lf5['QMin'], Lf5['QMax']))
+                        reason = 'The Qg({}) of line({}) in LF.LP5 out of range([{}, {}])'\
+                            .format(Qg, i + 1, Lf5['QMin'], Lf5['QMax'])
+                        print(reason)
+                        self.copy_res(reason=reason)
                         return False
         # Load
         with open(os.path.join(self.runPath,  'LF.LP6'), 'r', encoding='gbk') as fp:
@@ -151,14 +170,18 @@ class Vertify(object):
                 Qg = float(data[3])
                 if Lf6['PMin'] != Lf6['PMax'] != 0:
                     if Pg < Lf6['PMin'] or Pg > Lf6['PMax']:
-                        print('The Pg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
-                            .format(Pg, i + 1, Lf6['PMin'], Lf6['PMax']))
+                        reason = 'The Pg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
+                            .format(Pg, i + 1, Lf6['PMin'], Lf6['PMax'])
+                        print(reason)
+                        self.copy_res(reason=reason)
                         return False
                 if Lf6['QMin'] != Lf6['QMax'] != 0:
                     if Qg < Lf6['QMin'] or Pg > Lf6['QMax']:
-                        print('The Qg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
-                            .format(Qg, i + 1, Lf6['QMin'], Lf6['QMax']))
+                        reason = 'The Qg({}) of line({}) in LF.LP6 out of range([{}, {}])'\
+                            .format(Qg, i + 1, Lf6['QMin'], Lf6['QMax'])
+                        print(reason)
+                        self.copy_res(reason=reason)
                         return False
                 
-        self.copy_res()
+        self.copy_res(result=True)
         return True
