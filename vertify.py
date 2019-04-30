@@ -23,15 +23,21 @@ class Vertify(object):
         self.filesName = ['exe', 'dll', 'dat', 'DLL']
         
     
-    def copy_res(self):
+    def copy_res(self, result=False, reason=None):
         """
             copy the input and output of reasonible case to the results file
         """
-        dirs = os.listdir(self.resPath)
+        if result == True:
+            resPath = os.path.join(self.resPath, 'Convergence')
+        else:
+            resPath = os.path.join(self.resPath, 'Divergence')
+        if not os.path.exists(resPath):
+            os.makedirs(resPath)
+        dirs = os.listdir(resPath)
         dirsLength = len(dirs)
-        while os.path.exists(os.path.join(self.resPath, str(dirsLength))):
+        while os.path.exists(os.path.join(resPath, str(dirsLength))):
             dirsLength += 1
-        dstPath = os.path.join(self.resPath, str(dirsLength))
+        dstPath = os.path.join(resPath, str(dirsLength))
         os.makedirs(dstPath)
         dirs = os.listdir(self.runPath)
         for fileName in dirs:
@@ -44,6 +50,10 @@ class Vertify(object):
                 srcFile = os.path.join(self.runPath, fileName)
                 dstFile = os.path.join(dstPath, fileName)
                 copyfile(srcFile, dstFile)
+        if result == False:
+            f = open(os.path.join(dstPath, 'reason.txt'), 'a+')
+            f.write(reason)
+            f.close()
 
     
     def __call__(self, inputData):
@@ -58,6 +68,7 @@ class Vertify(object):
             data = firstLine.split(',')
             if int(data[0]) == 0:
                 print('The result doesn\'t converge!')
+                self.copy_res()
                 return False
         # bus
         with open(os.path.join(self.runPath,  'LF.LP1'), 'r', encoding='gbk') as fp:
@@ -69,6 +80,7 @@ class Vertify(object):
                 if v > 1.05 or v < 0.95:
                     print('The voltage({}) of the busId({}) is out of range.'\
                         .format(v, i + 1))
+                    self.copy_res()
                     return False
         # AC lines
         with open(os.path.join(self.runPath,  'LF.LP2'), 'r', encoding='gbk') as fp:
@@ -86,10 +98,12 @@ class Vertify(object):
                 if Pi ** 2 + Qi ** 2 > (Ui * Lf2['I']) ** 2:
                     print('The Pi ** 2 +Qi ** 2 out of Range in line({}) of LF.LP2'\
                         .format(i + 1))
+                    self.copy_res()
                     return False
                 if Pj ** 2 + Qj ** 2 > (Uj * Lf2['I']) ** 2:
                     print('The Pj ** 2 +Qj ** 2 out of Range in line({}) of LF.LP2'\
                         .format(i + 1))
+                    self.copy_res()
                     return False
         # Transformer
         with open(os.path.join(self.runPath,  'LF.LP3'), 'r', encoding='gbk') as fp:
